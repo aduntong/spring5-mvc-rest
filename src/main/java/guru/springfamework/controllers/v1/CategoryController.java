@@ -6,15 +6,15 @@ import guru.springfamework.services.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by jt on 9/26/17.
  */
 @Controller
-@RequestMapping("/api/v1/categories/")
+@RequestMapping("api/v1/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -23,6 +23,7 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+//    @RequestMapping(method = RequestMethod.HEAD )
     @GetMapping
     public ResponseEntity<CatorgoryListDTO> getallCatetories(){
 
@@ -35,5 +36,20 @@ public class CategoryController {
         return new ResponseEntity<CategoryDTO>(
                 categoryService.getCategoryByName(name), HttpStatus.OK
         );
+    }
+
+    /**
+     * just a joke
+     * @return
+     * Allow →GET, HEAD, POST, PUT, DELETE, OPTIONS, PATCH
+     * Content-Length →0
+     * Date →Wed, 05 Dec 2018 15:48:07 GMT
+     */
+    @RequestMapping(method = RequestMethod.OPTIONS)
+    @ResponseStatus(HttpStatus.I_AM_A_TEAPOT)
+    public void joke( HttpServletResponse response ){
+        System.out.println("joking");
+        response.addHeader( "Allow", "GET" );
+        return;
     }
 }

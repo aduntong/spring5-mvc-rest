@@ -22,7 +22,7 @@ public class CategoryMapperTest {
         category.setId(ID);
 
         //when
-        CategoryDTO categoryDTO = categoryMapper.categoryToCategoryDTO(category);
+        CategoryDTO categoryDTO = categoryMapper.toCategoryDTO(category);
 
         //then
         assertEquals(Long.valueOf(ID), categoryDTO.getId());
