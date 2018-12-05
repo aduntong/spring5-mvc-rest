@@ -8,36 +8,44 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.stream.Collectors;
+
 /**
  * Created by jt on 9/27/17.
  */
 @Controller
-@RequestMapping("/api/v1/customers")
+@RequestMapping( "api/v1/customers" )
 public class CustomerController {
 
-    private final CustomerService customerService;
+	private final CustomerService customerService;
 
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
-    }
+	public CustomerController( CustomerService customerService ) {
+		this.customerService = customerService;
+	}
 
-    @GetMapping
-    public ResponseEntity<CustomerListDTO> getListofCustomers(){
+	@GetMapping
+	public ResponseEntity< CustomerListDTO > getListofCustomers() {
 
-        return new ResponseEntity<CustomerListDTO>(new CustomerListDTO(customerService.getAllCustomers()),
-                HttpStatus.OK);
+		return new ResponseEntity< CustomerListDTO >( new CustomerListDTO( customerService.getAllCustomers() ), HttpStatus.OK );
 
-    }
+	}
 
-    @GetMapping({"/{id}"})
-    public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long id){
-        return new ResponseEntity<CustomerDTO>(customerService.getCustomerById(id), HttpStatus.OK);
-    }
+	@GetMapping( "/" )
+	public ResponseEntity< CustomerListDTO > queryListofCustomers( CustomerDTO customerDTO ) {
+		return new ResponseEntity< CustomerListDTO >( new CustomerListDTO( customerService.getAllCustomers().stream().filter(
+				rtnDTO -> ( customerDTO.getFirstname() == null || customerDTO.getFirstname().isEmpty() || rtnDTO.getFirstname().equals( customerDTO.getFirstname() ) ) &&
+				          ( customerDTO.getLastname() == null || customerDTO.getLastname().isEmpty() || rtnDTO.getLastname().equals( customerDTO.getLastname() ) ) ).collect(
+				Collectors.toList() ) ), HttpStatus.OK );
+	}
+
+	@GetMapping( { "/{id}" } )
+	public ResponseEntity< CustomerDTO > getCustomerById( @PathVariable Long id ) {
+		return new ResponseEntity< CustomerDTO >( customerService.getCustomerById( id ), HttpStatus.OK );
+	}
 
 
-    @PostMapping
-    public ResponseEntity<CustomerDTO> createNewCustomer(@RequestBody CustomerDTO customerDTO){
-        return new ResponseEntity<CustomerDTO>(customerService.createNewCustomer(customerDTO),
-                HttpStatus.CREATED);
-    }
+	@PostMapping
+	public ResponseEntity< CustomerDTO > createNewCustomer( @RequestBody CustomerDTO customerDTO ) {
+		return new ResponseEntity< CustomerDTO >( customerService.createNewCustomer( customerDTO ), HttpStatus.CREATED );
+	}
 }
