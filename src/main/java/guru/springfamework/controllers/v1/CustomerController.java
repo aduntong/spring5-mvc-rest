@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.stream.Collectors;
-
 /**
  * Created by jt on 9/27/17.
  */
@@ -32,10 +30,11 @@ public class CustomerController {
 
 	@GetMapping( "/" )
 	public ResponseEntity< CustomerListDTO > queryListofCustomers( CustomerDTO customerDTO ) {
-		return new ResponseEntity< CustomerListDTO >( new CustomerListDTO( customerService.getAllCustomers().stream().filter(
-				rtnDTO -> ( customerDTO.getFirstname() == null || customerDTO.getFirstname().isEmpty() || rtnDTO.getFirstname().equals( customerDTO.getFirstname() ) ) &&
-				          ( customerDTO.getLastname() == null || customerDTO.getLastname().isEmpty() || rtnDTO.getLastname().equals( customerDTO.getLastname() ) ) ).collect(
-				Collectors.toList() ) ), HttpStatus.OK );
+		return new ResponseEntity< CustomerListDTO >( new CustomerListDTO( customerService.getListByCondition( customerDTO ) ), HttpStatus.OK );
+//		return new ResponseEntity< CustomerListDTO >( new CustomerListDTO( customerService.getAllCustomers().stream().filter(
+//				rtnDTO -> ( customerDTO.getFirstname() == null || customerDTO.getFirstname().isEmpty() || rtnDTO.getFirstname().equals( customerDTO.getFirstname() ) ) &&
+//				          ( customerDTO.getLastname() == null || customerDTO.getLastname().isEmpty() || rtnDTO.getLastname().equals( customerDTO.getLastname() ) ) ).collect(
+//				Collectors.toList() ) ), HttpStatus.OK );
 	}
 
 	@GetMapping( { "/{id}" } )

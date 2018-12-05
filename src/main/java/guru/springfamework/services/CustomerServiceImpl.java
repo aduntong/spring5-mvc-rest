@@ -5,8 +5,11 @@ import guru.springfamework.api.v1.model.CustomerDTO;
 import guru.springfamework.domain.Customer;
 import guru.springfamework.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +42,36 @@ public class CustomerServiceImpl implements CustomerService {
                 })
                 .collect(Collectors.toList());
     }
+    public List<CustomerDTO> getListByCondition( CustomerDTO dto){
+        Specification querySpecifi = (Specification< CustomerDTO >)( root, criteriaQuery, criteriaBuilder ) -> {
 
+            List<Predicate> predicates = new ArrayList<>();
+            if(null != dto.getFirstname()){
+                predicates.add(criteriaBuilder.equal(root.get("firstname"), dto.getFirstname()));
+            }
+            if(null != dto.getLastname()){
+                predicates.add(criteriaBuilder.equal(root.get("lastname"), dto.getLastname()));
+            }
+            return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+        };
+        return customerRepository.findAll( querySpecifi );
+        /**
+         *         Specification querySpecifi = new Specification<CustomerDTO>() {
+         *             @Override
+         *             public Predicate toPredicate( Root<CustomerDTO> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
+         *
+         *                 List<Predicate> predicates = new ArrayList<>();
+         *                 if(null != dto.getFirstname()){
+         *                     predicates.add(criteriaBuilder.equal(root.get("firstname"), minDate));
+         *                 }
+         *                 if(null != dto.getLastname()){
+         *                     predicates.add(criteriaBuilder.equal(root.get("subscribeTime"), maxDate));
+         *                 }
+         *                 return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+         *             }
+         *         };
+         * */
+    }
     @Override
     public CustomerDTO getCustomerById(Long id) {
 
